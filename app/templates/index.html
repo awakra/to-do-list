@@ -1,0 +1,130 @@
+{% extends "base.html" %} {% block title %}Welcome{% endblock %} {% block
+content %}
+<div
+  class="container-fluid px-4 py-5 my-5 text-center"
+  style="background-color: #f8f9fa"
+>
+  <!-- Light background for hero -->
+  <div class="row align-items-center g-lg-5 py-5">
+    <div class="col-lg-7 text-center text-lg-start">
+      <h1 class="display-4 fw-bold lh-1 mb-3">
+        Organize and manage your tasks.
+      </h1>
+      <p class="col-lg-10 fs-4">Get started for free.</p>
+      <form
+        class="row g-3 mt-4 justify-content-center justify-content-lg-start"
+      >
+        <div class="col-md-7 col-lg-8">
+          <label for="emailInput" class="visually-hidden">Email address</label>
+          <input
+            type="email"
+            class="form-control form-control-lg"
+            id="emailInput"
+            placeholder="Enter your email"
+          />
+        </div>
+        <div class="col-md-4 col-lg-auto">
+          <button type="submit" class="btn btn-primary btn-lg w-100">
+            Sign up, it's free!
+          </button>
+        </div>
+      </form>
+      <p class="text-muted mt-3">
+        <small
+          >By signing up, you agree to our Terms of Service and Privacy
+          Policy.</small
+        >
+      </p>
+    </div>
+    <div class="col-md-10 mx-auto col-lg-5">
+      <img
+        src="https://via.placeholder.com/400x600.png?text=App+Screenshot"
+        class="d-block mx-lg-auto img-fluid rounded"
+        alt="App Screenshot"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</div>
+
+<div class="container px-4 py-5" id="featured-3">
+  <h2 class="pb-2 border-bottom">Core Features</h2>
+  <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+    <div class="feature col">
+      <div
+        class="feature-icon bg-primary bg-gradient text-white fs-2 mb-3 p-2 rounded"
+        style="width: fit-content"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
+          height="1em"
+          fill="currentColor"
+          class="bi bi-collection"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm2-2a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM0 13a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 16 13V6a1.5 1.5 0 0 0-1.5-1.5h-13A1.5 1.5 0 0 0 0 6v7zm1.5.5A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-13z"
+          />
+        </svg>
+      </div>
+      <h3>Organize Everything</h3>
+      <p>Paragraph of text beneath the heading to explain the heading.</p>
+      <a href="#" class="icon-link"> Learn more </a>
+    </div>
+    <div class="feature col">
+      <div
+        class="feature-icon bg-primary bg-gradient text-white fs-2 mb-3 p-2 rounded"
+        style="width: fit-content"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
+          height="1em"
+          fill="currentColor"
+          class="bi bi-people-fill"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"
+          />
+          <path
+            fill-rule="evenodd"
+            d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"
+          />
+          <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />
+        </svg>
+      </div>
+      <h3>Collaborate Easily</h3>
+      <p>Paragraph of text beneath the heading to explain the heading.</p>
+      <a href="#" class="icon-link"> Learn more </a>
+    </div>
+    <div class="feature col">
+      <div
+        class="feature-icon bg-primary bg-gradient text-white fs-2 mb-3 p-2 rounded"
+        style="width: fit-content"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="1em"
+          height="1em"
+          fill="currentColor"
+          class="bi bi-toggles2"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M9.465 10H12a2 2 0 1 1 0 4H9.465c.34-.588.535-1.271.535-2 0-.729-.195-1.412-.535-2z"
+          />
+          <path
+            d="M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm.535-10a3.975 3.975 0 0 1-.409-1H4a1 1 0 0 1 0-2h2.126c.091-.355.23-.69.41-1H4a2 2 0 1 0 0 4h2.535z"
+          />
+          <path d="M14 4a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" />
+        </svg>
+      </div>
+      <h3>Stay Productive</h3>
+      <p>Paragraph of text beneath the heading to explain the heading.</p>
+      <a href="#" class="icon-link"> Learn more </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
