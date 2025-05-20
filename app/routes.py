@@ -11,13 +11,18 @@ main_bp = Blueprint('main_bp', __name__)
 def index():
     return render_template("index.html")
 
-# --- Auth Routes---
+# --- Auth Routes ---
+
+# Signup 
 @main_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
         return redirect(url_for('main_bp.user_dashboard'))
 
     form = RegistrationForm()
+
+    if request.method == 'GET' and 'email' in request.args:
+        form.email.data = request.args.get('email')
 
     if form.validate_on_submit():
         username = form.username.data
@@ -55,17 +60,18 @@ def signin():
             flash('Login successful!', 'success')
             next_page = request.args.get('next')
             return redirect(next_page or url_for('main_bp.user_dashboard'))
+
         else:
             flash('Login Unsuccessful. Please check username/email and password', 'danger')
 
     return render_template('signin.html', form=form)
 
+# Logout
 @main_bp.route('/logout')
 def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main_bp.index'))
-
 
 @main_bp.route('/dashboard')
 @login_required

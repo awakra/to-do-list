@@ -13,6 +13,24 @@ content %}
       <p class="col-lg-10 fs-4">Get started for free.</p>
       <form
         class="row g-3 mt-4 justify-content-center justify-content-lg-start"
+        action="{{ url_for('main_bp.signup') }}"
+        {#
+        Point
+        to
+        signup
+        route
+        #}
+        method="get"
+        {#
+        Use
+        GET
+        method
+        to
+        pass
+        email
+        in
+        URL
+        #}
       >
         <div class="col-md-7 col-lg-8">
           <label for="emailInput" class="visually-hidden">Email address</label>
@@ -20,6 +38,15 @@ content %}
             type="email"
             class="form-control form-control-lg"
             id="emailInput"
+            name="email"
+            {#
+            Add
+            name
+            attribute
+            to
+            the
+            input
+            #}
             placeholder="Enter your email"
           />
         </div>

@@ -9,57 +9,35 @@ content %}
           {{ form.csrf_token }}
 
           <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input
-              type="text"
-              class="form-control"
-              id="username"
-              name="username"
-              required
-            />
-            {# Example with Flask-WTF: {{ form.username.label }} {{
-            form.username(class="form-control", required=True) }} #}
+            {{ form.username.label(class="form-label") }} {{
+            form.username(class="form-control", required=True) }} {% for error
+            in form.username.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
           </div>
 
           <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input
-              type="email"
-              class="form-control"
-              id="email"
-              name="email"
-              required
-            />
-            {# Example with Flask-WTF: {{ form.email.label }} {{
-            form.email(class="form-control", required=True) }} #}
+            {{ form.email.label(class="form-label") }} {{
+            form.email(class="form-control", required=True) }} {% for error in
+            form.email.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
           </div>
 
           <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              name="password"
-              required
-            />
-            {# Example with Flask-WTF: {{ form.password.label }} {{
-            form.password(class="form-control", required=True) }} #}
+            {{ form.password.label(class="form-label") }} {{
+            form.password(class="form-control", required=True) }} {% for error
+            in form.password.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
           </div>
 
           <div class="mb-3">
-            <label for="confirm_password" class="form-label"
-              >Confirm Password</label
-            >
-            <input
-              type="password"
-              class="form-control"
-              id="confirm_password"
-              name="confirm_password"
-              required
-            />
-            {# Example with Flask-WTF: {{ form.confirm_password.label }} {{
-            form.confirm_password(class="form-control", required=True) }} #}
+            {{ form.confirm_password.label(class="form-label") }} {{
+            form.confirm_password(class="form-control", required=True) }} {% for
+            error in form.confirm_password.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
           </div>
 
           <button type="submit" class="btn btn-primary w-100">Sign Up</button>
