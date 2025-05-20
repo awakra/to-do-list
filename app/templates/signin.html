@@ -1,0 +1,67 @@
+{% extends "base.html" %} {% block title %}Sign In{% endblock %} {% block
+content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h3 class="card-title text-center mb-4">Sign In to Your Account</h3>
+        <form method="POST" action="{{ url_for('main_bp.signin') }}">
+          {{ form.csrf_token }}
+
+          <div class="mb-3">
+            <label for="username_or_email" class="form-label"
+              >Username or Email</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="username_or_email"
+              name="username_or_email"
+              required
+            />
+            {# Example with Flask-WTF: {{ form.username_or_email.label }} {{
+            form.username_or_email(class="form-control", required=True) }} #}
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              required
+            />
+            {# Example with Flask-WTF: {{ form.password.label }} {{
+            form.password(class="form-control", required=True) }} #}
+          </div>
+
+          <div class="mb-3 form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="remember_me"
+              name="remember_me"
+            />
+            <label class="form-check-label" for="remember_me"
+              >Remember me</label
+            >
+            {# Example with Flask-WTF: {{
+            form.remember_me(class="form-check-input") }} {{
+            form.remember_me.label(class="form-check-label") }} #}
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Sign In</button>
+        </form>
+        <p class="text-center mt-3">
+          Don't have an account?
+          <a href="{{ url_for('main_bp.signup') }}">Sign Up</a>
+        </p>
+        <p class="text-center mt-2">
+          <a href="#">Forgot Password?</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
