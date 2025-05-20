@@ -12,7 +12,6 @@ def index():
     return render_template("index.html")
 
 # --- Auth Routes---
-
 @main_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
