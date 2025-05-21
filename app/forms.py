@@ -1,12 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, DateField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
-from .models import User
+from .models import User, Todo 
 from extensions import db
 from flask_login import current_user
+from datetime import date
 
 class RegistrationForm(FlaskForm):
-    """Formulário de Registro de Usuário."""
+    """User signup form."""
     username = StringField(
         'Username',
         validators=[DataRequired(), Length(min=2, max=80)]
@@ -37,7 +38,7 @@ class RegistrationForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    """Formulário de Login de Usuário."""
+    """User signin form."""
     username_or_email = StringField(
         'Username or Email',
         validators=[DataRequired()]
@@ -50,7 +51,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign In')
 
 class RequestResetForm(FlaskForm):
-    """Formulário para solicitar redefinição de senha."""
+    """Request password recovery form."""
     email = StringField('Email Address', validators=[DataRequired(), Email()])
     submit = SubmitField('Request Password Reset')
 
@@ -60,7 +61,26 @@ class RequestResetForm(FlaskForm):
             raise ValidationError('There is no account with that email address.')
 
 class ResetPasswordForm(FlaskForm):
-    """Formulário para redefinir a senha."""
+    """Reset password form."""
     password = PasswordField('New Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+    
+class TodoForm(FlaskForm):
+    """Form for creating and updating To-do items."""
+    description = TextAreaField(
+        'Description',
+        validators=[DataRequired(), Length(max=200)]
+    )
+    due_date = DateField(
+        'Due Date',
+        format='%Y-%m-%d', # Specify the date format
+        validators=[], # Make due date optional
+        render_kw={"placeholder": "YYYY-MM-DD"} # Add a placeholder
+    )
+    status = SelectField(
+        'Status',
+        choices=[('pending', 'Pending'), ('complete', 'Complete')],
+        validators=[DataRequired()]
+    )
+    submit = SubmitField('Save To-do')

@@ -4,7 +4,7 @@ from app import create_app
 
 load_dotenv() # Load environment variables from .env
 
-config_name = os.environ.get('FLASK_CONFIG') or 'development'
+config_name = os.environ.get('FLASK_CONFIG')
 app = create_app(config_name)
 
 if __name__ == '__main__':
