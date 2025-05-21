@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Welcome{% endblock %} {% block
+{% extends "base.html" %} {% block title %}To-Do tracker{% endblock %} {% block
 content %}
 <div
   class="container-fluid px-4 py-5 my-5 text-center"
@@ -56,19 +56,15 @@ content %}
           </button>
         </div>
       </form>
-      <p class="text-muted mt-3">
-        <small
-          >By signing up, you agree to our Terms of Service and Privacy
-          Policy.</small
-        >
-      </p>
     </div>
-    <div class="col-md-10 mx-auto col-lg-5">
+    <div
+      class="col-md-10 mx-auto col-lg-5 d-flex justify-content-center align-items-center"
+    >
       <img
-        src="https://via.placeholder.com/400x600.png?text=App+Screenshot"
-        class="d-block mx-lg-auto img-fluid rounded"
-        alt="App Screenshot"
-        loading="lazy"
+        src="{{ url_for('static', filename='images/logo.png') }}"
+        alt="Logo"
+        class="img-fluid"
+        style="max-height: 350px; width: auto"
       />
     </div>
   </div>

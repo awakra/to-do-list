@@ -5,3 +5,90 @@ html {
 body {
   min-height: 100%;
 }
+
+.navbar-brand {
+  color: #2c3e50;
+}
+
+.navbar-brand .icon-container {
+  width: 32px;
+  height: 32px;
+  background-color: #3fb3b3;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-brand .icon-container .checkmark {
+  color: white;
+  font-weight: bold;
+}
+
+.navbar-brand .app-name {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.nav-item .logout-link {
+  color: #dc3545; /* Bootstrap's danger color (red) */
+  font-weight: bold; /* Make it bold */
+  padding: 0.5rem 1rem; /* Add padding */
+  border-radius: 0.25rem; /* Rounded corners */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  text-decoration: none; /* Ensure no underline by default */
+}
+
+.nav-item .logout-link:hover {
+  background-color: #c82333; /* Darker red on hover */
+  color: white; /* White text on hover */
+  text-decoration: none; /* Ensure no underline on hover */
+}
+
+.nav-item .dashboard-link {
+  color: #007bff; /* Bootstrap's primary color (blue) */
+  font-weight: bold; /* Make it bold */
+  padding: 0.5rem 1rem; /* Add padding */
+  border-radius: 0.25rem; /* Rounded corners */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  text-decoration: none; /* Ensure no underline by default */
+}
+
+.nav-item .dashboard-link:hover {
+  background-color: #007bff; /* Blue background on hover */
+  color: white; /* White text on hover */
+  text-decoration: none; /* Ensure no underline on hover */
+}
+
+.nav-item .dashboard-link.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Styles for About link */
+.nav-item .about-link {
+  color: #000000;
+  font-weight: bold; /* Make it bold */
+  padding: 0.5rem 1rem; /* Add padding */
+  border-radius: 0.25rem; /* Rounded corners */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  text-decoration: none; /* Remove underline by default */
+}
+
+.nav-item .about-link:hover {
+  text-decoration: underline; /* Add underline on hover */
+}
+
+/* Styles for Home link */
+.nav-item .home-link {
+  color: #000000;
+  font-weight: bold; /* Make it bold */
+  padding: 0.5rem 1rem; /* Add padding */
+  border-radius: 0.25rem; /* Rounded corners */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  text-decoration: none; /* Remove underline by default */
+}
+
+.nav-item .home-link:hover {
+  text-decoration: underline;
+}
