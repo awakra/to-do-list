@@ -2,7 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from .models import User
-from extensions import db 
+from extensions import db
+from flask_login import current_user
 
 class RegistrationForm(FlaskForm):
     """Formulário de Registro de Usuário."""
@@ -47,3 +48,19 @@ class LoginForm(FlaskForm):
     )
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign In')
+
+class RequestResetForm(FlaskForm):
+    """Formulário para solicitar redefinição de senha."""
+    email = StringField('Email Address', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        user = db.session.execute(db.select(User).filter_by(email=email.data)).scalar_one_or_none()
+        if user is None:
+            raise ValidationError('There is no account with that email address.')
+
+class ResetPasswordForm(FlaskForm):
+    """Formulário para redefinir a senha."""
+    password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

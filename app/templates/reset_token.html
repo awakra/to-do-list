@@ -1,0 +1,43 @@
+{% extends "base.html" %} {% block title %}Reset Password{% endblock %} {% block
+content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h3 class="card-title text-center mb-4">Reset Password</h3>
+        <form method="POST" action="">
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.password.label(class="form-label") }}{% if
+            form.password.errors %} {{ form.password(class="form-control
+            is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.password.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %} {{ form.password(class="form-control") }} {% endif %}
+          </div>
+
+          <div class="mb-3">
+            {{ form.confirm_password.label(class="form-label") }} {# Use
+            form-label #} {% if form.confirm_password.errors %} {{
+            form.confirm_password(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+              {% for error in form.confirm_password.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% else %} {{ form.confirm_password(class="form-control") }} {%
+            endif %}
+          </div>
+          <div class="mb-0">
+            {{ form.submit(class="btn btn-primary w-100") }} {# Make button full
+            width #}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

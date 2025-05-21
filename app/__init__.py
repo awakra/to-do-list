@@ -1,20 +1,19 @@
-# app/__init__.py
 import os
 from flask import Flask
 from config import config
 from extensions import db, migrate
 from datetime import datetime, timezone
 from flask_wtf import CSRFProtect
-from flask_login import LoginManager # Importe LoginManager
+from flask_login import LoginManager
+from flask_mail import Mail
 
-# Inicialize CSRFProtect e LoginManager sem o app context
 csrf = CSRFProtect()
 login_manager = LoginManager()
+mail = Mail()
 
-# Configurações do Flask-Login
-login_manager.login_view = 'main_bp.signin' # Define a rota para onde redirecionar usuários não logados
-login_manager.login_message_category = 'info' # Categoria da mensagem flash padrão
-login_manager.login_message = 'Please log in to access this page.' # Mensagem padrão
+login_manager.login_view = 'main_bp.signin'
+login_manager.login_message_category = 'info'
+login_manager.login_message = 'Please log in to access this page.'
 
 def create_app(config_name=None):
     if config_name is None:
@@ -34,24 +33,19 @@ def create_app(config_name=None):
     db.init_app(app)
     migrate.init_app(app, db)
     csrf.init_app(app)
-    login_manager.init_app(app) # Inicialize LoginManager com o app context
+    login_manager.init_app(app)
+    mail.init_app(app)
 
-    # User loader para Flask-Login
-    # Esta função é usada pelo Flask-Login para carregar um usuário
-    # a partir do ID armazenado na sessão.
-    from .models import User # Importe o modelo User aqui para evitar importação circular
+    from .models import User
     @login_manager.user_loader
     def load_user(user_id):
-        # user_id é uma string, converta para o tipo correto do seu ID de usuário (geralmente int)
         if user_id is not None:
-            return db.session.get(User, int(user_id)) # Use db.session.get para buscar por PK
+            return db.session.get(User, int(user_id))
         return None
 
-    # Register Blueprints
     from .routes import main_bp
     app.register_blueprint(main_bp)
 
-    # Context processors
     @app.context_processor
     def inject_now():
         return {'now_year': datetime.now(timezone.utc).year}
