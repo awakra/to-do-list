@@ -13,25 +13,52 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     todos = db.relationship('Todo', backref='author', lazy='dynamic')
     reset_token = db.Column(db.String(100), nullable=True)
-    reset_token_expiration = db.Column(db.DateTime, nullable=True)
+    reset_token_expiration = db.Column(db.DateTime(timezone=True), nullable=True)
 
     def __repr__(self):
         return f'<User {self.username}>'
 
     def get_reset_token(self, expires_sec=1800):
         s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        token = s.dumps({'user_id': self.id})
+        self.reset_token = token
+        # Store as offset-aware datetime in UTC
         self.reset_token_expiration = datetime.now(timezone.utc) + timedelta(seconds=expires_sec)
         db.session.commit()
-        return s.dumps({'user_id': self.id}) # Remove .decode('utf-8')
+        return token
 
     @staticmethod
     def verify_reset_token(token):
         s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
         try:
-            user_id = s.loads(token, max_age=1800)['user_id']
-        except:
+            data = s.loads(token, max_age=1800) # itsdangerous handles expiration check here
+            user_id = data['user_id']
+        except Exception: # Catches expired token or bad signature
             return None
-        return db.session.get(User, user_id)
+
+        user = db.session.get(User, user_id)
+
+        # Ensure user exists and the token matches the one stored in the database
+        if user is None or user.reset_token != token:
+            return None
+
+        # Now, explicitly check the expiration time stored in the database
+        # This is a secondary check, primarily to ensure the token hasn't been invalidated
+
+        expiration_time_from_db = user.reset_token_expiration
+
+        # If expiration_time_from_db is None (e.g., token already used and cleared), treat as expired/invalid
+        if expiration_time_from_db is None:
+            return None
+
+        # Ensure the expiration_time_from_db is timezone-aware (UTC) before comparison
+        if expiration_time_from_db.tzinfo is None or expiration_time_from_db.tzinfo.utcoffset(expiration_time_from_db) is None:
+            expiration_time_from_db = expiration_time_from_db.replace(tzinfo=timezone.utc)
+
+        if expiration_time_from_db < datetime.now(timezone.utc):
+            return None
+
+        return user
 
 
 class Todo(db.Model):
@@ -41,7 +68,7 @@ class Todo(db.Model):
     description = db.Column(db.String(200), nullable=False)
     status = db.Column(db.String(20), default='pending', nullable=False)
     due_date = db.Column(db.DateTime, nullable=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 
     def __repr__(self):
         return f'<Todo {self.description}>'

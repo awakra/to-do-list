@@ -116,8 +116,8 @@ def reset_token(token):
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
         user.password = hashed_password
-        user.reset_token = None
-        user.reset_token_expiration = None
+        user.reset_token = None  # Clear the token after use
+        user.reset_token_expiration = None  # Clear the expiration after use
         db.session.commit()
         flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('main_bp.signin'))
