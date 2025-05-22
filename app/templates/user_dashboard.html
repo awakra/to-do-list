@@ -48,8 +48,8 @@ content %}
                 >
 
                 <!-- Display priority with color-coded badge -->
-                <br /><small class="text-muted"
-                  >Priority: {% if todo.priority == 'high' %}
+                <br /><small class="text-muted">
+                  Priority: {% if todo.priority == 'high' %}
                   <span class="badge bg-danger">High</span>
                   {% elif todo.priority == 'medium' %}
                   <span class="badge bg-warning text-dark">Medium</span>
@@ -60,8 +60,8 @@ content %}
 
                 <!-- Display tags if they exist -->
                 {% if todo.tags %}
-                <br /><small class="text-muted"
-                  >Tags: {% for tag in todo.tags.split(',') %}
+                <br /><small class="text-muted">
+                  Tags: {% for tag in todo.tags.split(',') %}
                   <span class="badge bg-secondary">{{ tag.strip() }}</span>
                   {% endfor %}
                 </small>
@@ -78,6 +78,28 @@ content %}
                   class="btn btn-sm btn-info me-2"
                   >Edit</a
                 >
+
+                {% if todo.status != 'complete' %}
+                <form
+                  action="{{ url_for('main_bp.complete_todo', todo_id=todo.id) }}"
+                  method="POST"
+                  class="d-inline me-2"
+                >
+                  <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                  />
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-success"
+                    onclick="return confirm('Mark this task as complete?')"
+                  >
+                    Complete
+                  </button>
+                </form>
+                {% endif %}
+
                 <form
                   action="{{ url_for('main_bp.delete_todo', todo_id=todo.id) }}"
                   method="POST"
@@ -102,7 +124,7 @@ content %}
           </ul>
           {% else %}
           <p class="text-center">
-            You don't have any to-do items yet. Add one above!
+            You don't have any active to-do items yet. Add one above!
           </p>
           {% endif %}
 

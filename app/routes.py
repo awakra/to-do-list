@@ -1,15 +1,13 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify, current_app
 from .models import User, Todo
-from extensions import db
+from extensions import db, mail
 from .forms import RegistrationForm, LoginForm, RequestResetForm, ResetPasswordForm, TodoForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
-from flask_mail import Message, Mail
-from flask import current_app
+from flask_mail import Message
 from datetime import datetime, timezone
 
 main_bp = Blueprint('main_bp', __name__)
-mail = Mail()
 
 @main_bp.route('/')
 def index():
@@ -17,7 +15,6 @@ def index():
 
 # --- Auth Routes ---
 
-# Signup
 @main_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
@@ -44,7 +41,6 @@ def signup():
 
     return render_template('signup.html', form=form)
 
-# Login
 @main_bp.route('/signin', methods=['GET', 'POST'])
 def signin():
     if current_user.is_authenticated:
@@ -57,7 +53,11 @@ def signin():
         password = form.password.data
         remember_me = form.remember_me.data
 
-        user = db.session.execute(db.select(User).filter((User.username == username_or_email) | (User.email == username_or_email))).scalar_one_or_none()
+        user = db.session.execute(
+            db.select(User).filter(
+                (User.username == username_or_email) | (User.email == username_or_email)
+            )
+        ).scalar_one_or_none()
 
         if user and check_password_hash(user.password, password):
             login_user(user, remember=remember_me)
@@ -70,21 +70,26 @@ def signin():
 
     return render_template('signin.html', form=form)
 
-# Logout
 @main_bp.route('/logout')
 def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main_bp.index'))
 
-# User Dashboard (Read To-dos)
+# --- User Dashboard ---
+
 @main_bp.route('/dashboard')
 @login_required
 def user_dashboard():
-    todos = db.session.execute(db.select(Todo).filter_by(author=current_user).order_by(Todo.created_at.desc())).scalars().all()
+    todos = db.session.execute(
+        db.select(Todo)
+        .filter(Todo.author == current_user, Todo.status != 'complete')
+        .order_by(Todo.created_at.desc())
+    ).scalars().all()
     return render_template('user_dashboard.html', todos=todos)
 
-# Request Password Reset
+# --- Password Reset Routes ---
+
 @main_bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_request():
     if current_user.is_authenticated:
@@ -94,7 +99,11 @@ def reset_request():
         user = db.session.execute(db.select(User).filter_by(email=form.email.data)).scalar_one_or_none()
         if user:
             token = user.get_reset_token()
-            msg = Message('Password Reset Request', sender=current_app.config['MAIL_DEFAULT_SENDER'], recipients=[user.email])
+            msg = Message(
+                'Password Reset Request',
+                sender=current_app.config['MAIL_DEFAULT_SENDER'],
+                recipients=[user.email]
+            )
             msg.body = f'''To reset your password, visit the following link:
 {url_for('main_bp.reset_token', token=token, _external=True)}
 If you did not make this request then simply ignore this email and no changes will be made.
@@ -106,7 +115,6 @@ If you did not make this request then simply ignore this email and no changes wi
         return redirect(url_for('main_bp.signin'))
     return render_template('reset_request.html', title='Reset Password', form=form)
 
-# Reset Password with Token
 @main_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_token(token):
     if current_user.is_authenticated:
@@ -119,8 +127,8 @@ def reset_token(token):
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
         user.password = hashed_password
-        user.reset_token = None  # Clear the token after use
-        user.reset_token_expiration = None  # Clear the expiration after use
+        user.reset_token = None
+        user.reset_token_expiration = None
         db.session.commit()
         flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('main_bp.signin'))
@@ -128,7 +136,6 @@ def reset_token(token):
 
 # --- To-do Routes ---
 
-# Create To-do
 @main_bp.route('/todo/new', methods=['GET', 'POST'])
 @login_required
 def new_todo():
@@ -148,7 +155,6 @@ def new_todo():
         return redirect(url_for('main_bp.user_dashboard'))
     return render_template('create_todo.html', title='New To-do', form=form)
 
-# Update To-do
 @main_bp.route('/todo/<int:todo_id>/update', methods=['GET', 'POST'])
 @login_required
 def update_todo(todo_id):
@@ -174,9 +180,8 @@ def update_todo(todo_id):
         form.status.data = todo.status
         form.tags.data = todo.tags
         form.priority.data = todo.priority
-        return render_template('create_todo.html', title='Update To-do', form=form)
+    return render_template('create_todo.html', title='Update To-do', form=form)
 
-# Delete To-do
 @main_bp.route('/todo/<int:todo_id>/delete', methods=['POST'])
 @login_required
 def delete_todo(todo_id):
@@ -191,20 +196,34 @@ def delete_todo(todo_id):
     flash('Your to-do has been deleted!', 'success')
     return redirect(url_for('main_bp.user_dashboard'))
 
+@main_bp.route('/todo/<int:todo_id>/complete', methods=['POST'])
+@login_required
+def complete_todo(todo_id):
+    todo = db.session.get(Todo, todo_id)
+    if todo is None:
+        abort(404)
+    if todo.author != current_user:
+        abort(403)
+
+    todo.status = 'complete'
+    db.session.commit()
+    flash('Task marked as complete.', 'success')
+    return redirect(url_for('main_bp.user_dashboard'))
+
 # --- Calendar Routes ---
 
 @main_bp.route('/calendar')
 @login_required
 def calendar_view():
-    """Renders the calendar view page."""
     return render_template('calendar.html', title='Calendar View')
 
 @main_bp.route('/api/todos_calendar')
 @login_required
 def todos_calendar_api():
-    """Returns user's todos in a FullCalendar-compatible JSON format."""
     todos = db.session.execute(
-        db.select(Todo).filter_by(author=current_user).order_by(Todo.due_date.asc())
+        db.select(Todo)
+        .filter(Todo.author == current_user, Todo.status != 'complete')
+        .order_by(Todo.due_date.asc())
     ).scalars().all()
 
     events = []
@@ -238,15 +257,10 @@ def todos_calendar_api():
 @main_bp.route('/completed_todos')
 @login_required
 def completed_todos_history():
-    """
-    Displays a list of completed to-do items for the current user.
-    Also calculates and displays basic statistics.
-    """
     completed_todos = db.session.execute(
         db.select(Todo).filter_by(author=current_user, status='complete').order_by(Todo.created_at.desc())
     ).scalars().all()
 
-    # Basic statistics
     total_completed = len(completed_todos)
     completed_by_month = {}
     for todo in completed_todos:
@@ -265,9 +279,6 @@ def completed_todos_history():
 @main_bp.route('/todo/<int:todo_id>/restore', methods=['POST'])
 @login_required
 def restore_todo(todo_id):
-    """
-    Restores a completed to-do item by changing its status back to 'pending'.
-    """
     todo = db.session.get(Todo, todo_id)
     if todo is None:
         abort(404)
