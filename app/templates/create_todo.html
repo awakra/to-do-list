@@ -26,6 +26,28 @@
             {% endfor %}
           </div>
 
+          <!-- New field for tags -->
+          <div class="mb-3">
+            {{ form.tags.label(class="form-label") }} {{
+            form.tags(class="form-control") }} {% for error in form.tags.errors
+            %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+            <small class="form-text text-muted"
+              >Separate multiple tags with commas (e.g., work, personal,
+              urgent)</small
+            >
+          </div>
+
+          <!-- New field for priority -->
+          <div class="mb-3">
+            {{ form.priority.label(class="form-label") }} {{
+            form.priority(class="form-select") }} {% for error in
+            form.priority.errors %}
+            <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+
           <div class="mb-3">
             {{ form.status.label(class="form-label") }} {{
             form.status(class="form-select") }} {% for error in

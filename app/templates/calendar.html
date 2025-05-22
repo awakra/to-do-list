@@ -1,0 +1,79 @@
+{% extends "base.html" %} {% block title %}Calendar View{% endblock %} {% block
+head %} {{ super() }}
+<!-- FullCalendar CSS -->
+<link
+  href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css"
+  rel="stylesheet"
+/>
+<style>
+  /* Optional: Adjust calendar height */
+  #calendar {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h3 class="card-title text-center mb-4">Your To-do Calendar</h3>
+          <div id="calendar"></div>
+          <p class="text-center mt-3">
+            <a href="{{ url_for('main_bp.user_dashboard') }}"
+              >Back to Dashboard</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %} {{ super() }}
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var calendarEl = document.getElementById("calendar");
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: "dayGridMonth", // Default view
+      headerToolbar: {
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek,timeGridDay", // Views available
+      },
+      events: '{{ url_for("main_bp.todos_calendar_api") }}', // API endpoint for events
+      eventClick: function (info) {
+        // Redirect to the todo update page when an event is clicked
+        if (info.event.url) {
+          window.location.href = info.event.url;
+          info.jsEvent.preventDefault(); // Prevent default browser action
+        }
+      },
+      eventDidMount: function (info) {
+        var tooltipContent = `
+                        <strong>${info.event.title}</strong><br>
+                        Status: ${
+                          info.event.extendedProps.status
+                            .charAt(0)
+                            .toUpperCase() +
+                          info.event.extendedProps.status.slice(1)
+                        }<br>
+                        Priority: ${
+                          info.event.extendedProps.priority
+                            .charAt(0)
+                            .toUpperCase() +
+                          info.event.extendedProps.priority.slice(1)
+                        }
+                    `;
+        if (info.event.extendedProps.tags) {
+          tooltipContent += `<br>Tags: ${info.event.extendedProps.tags}`;
+        }
+        info.el.setAttribute("title", tooltipContent); // Basic tooltip
+      },
+    });
+    calendar.render();
+  });
+</script>
+{% endblock %}

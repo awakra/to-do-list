@@ -83,4 +83,20 @@ class TodoForm(FlaskForm):
         choices=[('pending', 'Pending'), ('complete', 'Complete')],
         validators=[DataRequired()]
     )
+    # Fields for tags and priority
+    tags = StringField(
+        'Tags (comma separated)',
+        validators=[Length(max=255)],
+        render_kw={"placeholder": "work, personal, urgent"}
+    )
+    priority = SelectField(
+        'Priority',
+        choices=[
+            ('low', 'Low'), 
+            ('medium', 'Medium'), 
+            ('high', 'High')
+        ],
+        default='medium',
+        validators=[DataRequired()]
+    )
     submit = SubmitField('Save To-do')

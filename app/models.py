@@ -69,6 +69,9 @@ class Todo(db.Model):
     status = db.Column(db.String(20), default='pending', nullable=False)
     due_date = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    # Fields for categories/tags and priority
+    tags = db.Column(db.String(255), nullable=True)  # Stores comma-separated tags
+    priority = db.Column(db.String(20), default='medium', nullable=False) # 'low', 'medium', 'high'
 
     def __repr__(self):
         return f'<Todo {self.description}>'
