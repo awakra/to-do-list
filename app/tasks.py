@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from flask_mail import Message
 from flask import current_app, url_for
-from extensions import db 
-from .models import Todo, User 
+from extensions import db, mail
+from .models import Todo, User
 
 def send_due_date_reminders(app):
     """
@@ -15,7 +15,6 @@ def send_due_date_reminders(app):
         reminder_window_end = now_utc + timedelta(days=1)
 
         # Query for todos that are pending and have a due_date within the reminder window
-        # Ensure due_date is not None and is within the next 24 hours
         todos_due_soon = db.session.execute(
             db.select(Todo).filter(
                 Todo.status == 'pending',
@@ -32,11 +31,11 @@ def send_due_date_reminders(app):
         app.logger.info(f"Found {len(todos_due_soon)} todos due soon. Sending reminders...")
 
         for todo in todos_due_soon:
-            user = todo.author # Access the associated user via the relationship
+            user = todo.author  # Access the associated user via the relationship
             if user and user.email:
                 try:
                     msg = Message(
-                        f'Reminder: Your To-do "{todo.description}" is due soon!',
+                        subject=f'Reminder: Your To-do "{todo.description}" is due soon!',
                         sender=current_app.config['MAIL_DEFAULT_SENDER'],
                         recipients=[user.email]
                     )
@@ -60,7 +59,7 @@ You can view and manage your tasks here:
 Best regards,
 Your To-do App Team
 '''
-                    current_app.mail.send(msg)
+                    mail.send(msg)
                     app.logger.info(f"Reminder sent for todo ID {todo.id} to {user.email}")
                 except Exception as e:
                     app.logger.error(f"Failed to send reminder for todo ID {todo.id} to {user.email}: {e}")

@@ -10,7 +10,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False) # Wasn't necessary atm
     todos = db.relationship('Todo', backref='author', lazy='dynamic')
     reset_token = db.Column(db.String(100), nullable=True)
     reset_token_expiration = db.Column(db.DateTime(timezone=True), nullable=True)
